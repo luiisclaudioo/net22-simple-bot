@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace SimpleBotCore.Logic
 {
@@ -72,8 +74,17 @@ namespace SimpleBotCore.Logic
                 if( texto.EndsWith("?") )
                 {
                     await WriteAsync("Processando...");
+                                        
+                    var cliente = new MongoClient("mongodb://localhost:27017");
+                    var db = cliente.GetDatabase("net22");
+                    var col = db.GetCollection<BsonDocument>("col01");
+                    var doc = new BsonDocument
+                                {
+                                    {"Perguna", texto }
+                                };
 
-                    // FAZER: GRAVAR AS PERGUNTAS EM UM BANCO DE DADOS
+                    col.InsertOne(doc);
+
                     await Task.Delay(5000);
 
                     await WriteAsync("Resposta não encontrada");
